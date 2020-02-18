@@ -1,12 +1,14 @@
 # ABD-Net on Torch-Reid
 
-ABD-Net在Torch-Reid上的实现。
+ABD-Net在Torch-Reid(latest 1.0.9)上的实现。
 
 ###使用方法
 
 在工程根目录下输入：
 
     python setup.py develop
+    
+编译工程。
     
 将ABD-Net文件夹放入deep-person-reid的projects文件夹中，将abd_resnet放入torchreid/models文件夹中，在
 
