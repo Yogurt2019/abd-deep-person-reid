@@ -2,7 +2,7 @@
 
 ABD-Net在Torch-Reid(latest 1.0.9)上的实现。
 
-###使用方法
+### 使用方法
 
 在工程根目录下输入：
 
@@ -30,7 +30,7 @@ ABD-Net在Torch-Reid(latest 1.0.9)上的实现。
 
 具体用法和Deep-Person-Reid相同。
 
-###引用
+### 引用
 
 [Deep-Person-Reid](https://github.com/KaiyangZhou/deep-person-reid)
 
