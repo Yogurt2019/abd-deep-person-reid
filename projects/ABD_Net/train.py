@@ -1,18 +1,20 @@
 import torchreid
-from ABD_components.abd_engine import ImageABDEngine
+from projects.ABD_Net.ABD_components.abd_engine import ImageABDEngine
 from torch import nn
 
 torchreid.data.register_image_dataset('rock_dataset', torchreid.data.datasets.image.rock_dataset.RockDataSet)
 
 datamanager = torchreid.data.ImageDataManager(
     root='/media/ddj2/ce611f70-968b-4316-9547-9bc9cf931d32/V20200108/zhejiang_train',
+    # root='/media/ddj2/ce611f70-968b-4316-9547-9bc9cf931d32/remote_data',
     sources='rock_dataset',
     targets='rock_dataset',
     height=672,
     width=672,
-    batch_size_train=16,
-    batch_size_test=16,
-    transforms=[]
+    batch_size_train=12,
+    batch_size_test=12,
+    transforms=[],
+    workers=32,
 )
 
 model = torchreid.models.build_model(
@@ -30,6 +32,14 @@ optimizer = torchreid.optim.build_optimizer(
     lr=0.0003
 )
 
+
+# start_epoch = torchreid.utils.resume_from_checkpoint(
+#     'log/abd_resnet50/model.pth.tar-80',
+#     model,
+#     optimizer
+# )
+
+
 scheduler = torchreid.optim.build_lr_scheduler(
     optimizer,
     lr_scheduler='single_step',
@@ -42,15 +52,17 @@ engine = ImageABDEngine(
     optimizer=optimizer,
     scheduler=scheduler,
     label_smooth=True,
-    weight_t=0.1,
+    weight_t=0,
     weight_x=1,
-    margin=1.2
+    margin=1.2,
 )
 
 engine.run(
-    save_dir='log/abd_resnet50',
+    save_dir='log/resnet50_pam',
     max_epoch=60,
     eval_freq=10,
     print_freq=10,
-    test_only=False
+    test_only=False,
+    fixbase_epoch=0,
+    open_layers=['classifier']
 )

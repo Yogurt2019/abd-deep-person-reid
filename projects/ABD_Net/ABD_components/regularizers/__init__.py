@@ -7,6 +7,12 @@ from .SVDO import SVDORegularizer
 from .SO import SORegularizer
 
 
+mapping = {
+    False: NoneRegularizer,
+    True: SVMORegularizer,
+}
+
+
 class ConvRegularizer(nn.Module):
 
     def __init__(self, klass, controller):
@@ -35,8 +41,8 @@ class ConvRegularizer(nn.Module):
         return accumulator
 
 
-def get_regularizer():
+def get_regularizer(use_ow):
     regularizer_args = {
         'ow_beta': 1e-3
     }
-    return ConvRegularizer(SVMORegularizer, regularizer_args)
+    return ConvRegularizer(mapping[use_ow], regularizer_args)

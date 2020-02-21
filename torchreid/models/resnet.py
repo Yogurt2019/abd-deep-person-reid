@@ -350,8 +350,10 @@ class ResNet(nn.Module):
         x = self.layer4(x)
         return x
 
-    def forward(self, x):
+    def forward(self, x, return_featuremaps=False):
         f = self.featuremaps(x)
+        if return_featuremaps:
+            return f
         v = self.global_avgpool(f)
         v = v.view(v.size(0), -1)
 

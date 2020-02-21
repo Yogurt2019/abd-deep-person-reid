@@ -5,8 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from collections import defaultdict
 
-from ABD_components.tools.utils import init_params
-from ABD_components.model_components.attention import get_attention_module_instance
+from projects.ABD_Net.ABD_components.tools.utils import init_params
+from projects.ABD_Net.ABD_components.model_components.attention import get_attention_module_instance
 
 
 class MultiBranchNetwork(nn.Module):

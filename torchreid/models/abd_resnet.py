@@ -5,8 +5,8 @@ from torch import nn
 import torch.utils.model_zoo as model_zoo
 from copy import deepcopy
 
-from ABD_components.model_components import branches
-from ABD_components.model_components import ShallowCAM
+from projects.ABD_Net.ABD_components.model_components import branches
+from projects.ABD_Net.ABD_components.model_components import ShallowCAM
 
 import logging
 
@@ -276,12 +276,14 @@ def ABD_resnet50(num_classes, loss='xent', pretrained=False, use_gpu=True):
     backbone = resnet50_backbone()
     args = {
         'branches': ['global', 'abd'],
+        # 'branches': ['global'],
         'global_max_pooling': False,
         'global_dim': 1024,
         'dropout': 0.5,
         'abd_dim': 1024,
         'abd_np': 2,
-        'abd_dan': ['cam', 'pam'],
+        'abd_dan': ['pam', 'cam'],
+        # 'abd_dan': ['cam', 'pam'],
         'abd_dan_no_head': True,
         'shallow_cam': True,
         'compatibility': False

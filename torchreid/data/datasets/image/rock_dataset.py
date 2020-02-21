@@ -4,7 +4,7 @@ from __future__ import division
 
 import os
 import os.path as osp
-from ABD_components.tools.utils import get_path
+from projects.ABD_Net.ABD_components.tools.utils import get_path
 from torchreid.data.datasets.dataset import ImageDataset
 import pickle
 
@@ -57,6 +57,6 @@ class RockDataSet(ImageDataset):
                         train.append(tuple)
                     elif mode == gallery_dir:
                         gallery.append(tuple)
-                    else:
+                    elif mode == query_dir:
                         query.append(tuple)
         super(RockDataSet, self).__init__(train, query, gallery, **kwargs)

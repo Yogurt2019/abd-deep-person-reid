@@ -134,8 +134,8 @@ def main():
     parser.add_argument('-m', '--model', type=str, default='osnet_x1_0')
     parser.add_argument('--weights', type=str)
     parser.add_argument('--save-dir', type=str, default='log')
-    parser.add_argument('--height', type=int, default=256)
-    parser.add_argument('--width', type=int, default=128)
+    parser.add_argument('--height', type=int, default=672)
+    parser.add_argument('--width', type=int, default=672)
     args = parser.parse_args()
 
     use_gpu = torch.cuda.is_available()
@@ -145,8 +145,8 @@ def main():
         sources=args.dataset,
         height=args.height,
         width=args.width,
-        batch_size_train=100,
-        batch_size_test=100,
+        batch_size_train=8,
+        batch_size_test=8,
         transforms=None,
         train_sampler='SequentialSampler'
     )

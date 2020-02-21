@@ -4,10 +4,11 @@ import datetime
 
 from torchreid import metrics
 from torchreid.utils import (
-    AverageMeter, open_all_layers, open_specified_layers
+    AverageMeter, open_all_layers
 )
 from torchreid.losses import TripletLoss, CrossEntropyLoss
-from ABD_components import regularizers
+from projects.ABD_Net.ABD_components import regularizers
+from projects.ABD_Net.ABD_components.tools.utils import open_specified_layers
 
 from torchreid.engine import Engine
 
@@ -106,6 +107,9 @@ class ImageABDEngine(Engine):
         batch_time = AverageMeter()
         data_time = AverageMeter()
 
+        use_of = False
+        use_ow = False
+
         self.model.train()
         if (epoch + 1) <= fixbase_epoch and open_layers is not None:
             print(
@@ -116,7 +120,7 @@ class ImageABDEngine(Engine):
             open_specified_layers(self.model, open_layers)
         else:
             open_all_layers(self.model)
-        regularizer = regularizers.get_regularizer()
+        regularizer = regularizers.get_regularizer(use_ow)
         from .of_penalty import OFPenalty
         of_args = {
             'of_position': ['before', 'after', 'cam', 'pam', 'intermediate'],
@@ -141,7 +145,7 @@ class ImageABDEngine(Engine):
             loss = self.weight_t * loss_t + self.weight_x * loss_x
             reg = regularizer(self.model)
             loss += reg
-            if epoch >= of_start_epoch:
+            if use_of and epoch >= of_start_epoch:
                 penalty = of_penalty(outputs)
                 loss += penalty
 
@@ -153,7 +157,7 @@ class ImageABDEngine(Engine):
 
             losses_t.update(loss_t.item(), pids.size(0))
             losses_x.update(loss_x.item(), pids.size(0))
-            accs.update(metrics.accuracy(outputs, pids)[0].item())
+            accs.update(metrics.accuracy(outputs[0], pids)[0].item())
 
             if (batch_idx + 1) % print_freq == 0:
                 # estimate remaining time
@@ -163,13 +167,13 @@ class ImageABDEngine(Engine):
                 )
                 eta_str = str(datetime.timedelta(seconds=int(eta_seconds)))
                 print(
-                    'Epoch: [{0}/{1}][{2}/{3}]\t'
-                    'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                    'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
-                    'Loss_t {loss_t.val:.4f} ({loss_t.avg:.4f})\t'
-                    'Loss_x {loss_x.val:.4f} ({loss_x.avg:.4f})\t'
-                    'Acc {acc.val:.2f} ({acc.avg:.2f})\t'
-                    'Lr {lr:.6f}\t'
+                    'Epoch: [{0}/{1}][{2}/{3}]  '
+                    'Time {batch_time.val:.3f} ({batch_time.avg:.3f})  '
+                    'Data {data_time.val:.3f} ({data_time.avg:.3f})  '
+                    'Loss_t {loss_t.val:.4f} ({loss_t.avg:.4f})  '
+                    'Loss_x {loss_x.val:.4f} ({loss_x.avg:.4f})  '
+                    'Acc {acc.val:.2f} ({acc.avg:.2f})  '
+                    'Lr {lr:.6f}  '
                     'eta {eta}'.format(
                         epoch + 1,
                         max_epoch,
