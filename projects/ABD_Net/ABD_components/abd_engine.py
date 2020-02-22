@@ -9,6 +9,7 @@ from torchreid.utils import (
 from torchreid.losses import TripletLoss, CrossEntropyLoss
 from projects.ABD_Net.ABD_components import regularizers
 from projects.ABD_Net.ABD_components.tools.utils import open_specified_layers
+from projects.ABD_Net.ABD_components.args import argument_parser, of_kwargs
 
 from torchreid.engine import Engine
 
@@ -107,8 +108,8 @@ class ImageABDEngine(Engine):
         batch_time = AverageMeter()
         data_time = AverageMeter()
 
-        use_of = False
-        use_ow = False
+        parser = argument_parser()
+        args = parser.parse_args()
 
         self.model.train()
         if (epoch + 1) <= fixbase_epoch and open_layers is not None:
@@ -120,13 +121,10 @@ class ImageABDEngine(Engine):
             open_specified_layers(self.model, open_layers)
         else:
             open_all_layers(self.model)
-        regularizer = regularizers.get_regularizer(use_ow)
+        regularizer = regularizers.get_regularizer()
         from .of_penalty import OFPenalty
-        of_args = {
-            'of_position': ['before', 'after', 'cam', 'pam', 'intermediate'],
-            'of_beta': 1e-6,
-            'of_start_epoch': 23
-        }
+
+        of_args = of_kwargs(args)
         of_penalty = OFPenalty(of_args)
 
         num_batches = len(self.train_loader)
@@ -145,7 +143,7 @@ class ImageABDEngine(Engine):
             loss = self.weight_t * loss_t + self.weight_x * loss_x
             reg = regularizer(self.model)
             loss += reg
-            if use_of and epoch >= of_start_epoch:
+            if args.use_of and epoch >= of_start_epoch:
                 penalty = of_penalty(outputs)
                 loss += penalty
 

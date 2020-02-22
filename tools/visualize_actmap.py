@@ -54,7 +54,8 @@ def visactmap(
 
             # forward to get convolutional feature maps
             try:
-                outputs = model(imgs, return_featuremaps=True)
+                outputs = model(imgs)
+                outputs = outputs[3]['after'][0]
             except TypeError:
                 raise TypeError(
                     'forward() got unexpected keyword argument "return_featuremaps". '
@@ -85,7 +86,8 @@ def visactmap(
             for j in range(outputs.size(0)):
                 # get image name
                 path = paths[j]
-                imname = osp.basename(osp.splitext(path)[0])
+                imname = path.split['/'][-1]
+                imdir = path.split['/'][-2]
 
                 # RGB image
                 img = imgs[j, ...]
@@ -117,7 +119,9 @@ def visactmap(
                 grid_img[:,
                          width + GRID_SPACING:2*width + GRID_SPACING, :] = am
                 grid_img[:, 2*width + 2*GRID_SPACING:, :] = overlapped
-                cv2.imwrite(osp.join(actmap_dir, imname + '.jpg'), grid_img)
+                if not osp.exists(osp.join(actmap_dir, imdir)):
+                    mkdir_if_missing(osp.join(actmap_dir, imdir))
+                cv2.imwrite(osp.join(actmap_dir, imdir, imname), grid_img)
 
             if (batch_idx+1) % 10 == 0:
                 print(
@@ -129,11 +133,11 @@ def visactmap(
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--root', type=str)
-    parser.add_argument('-d', '--dataset', type=str, default='market1501')
-    parser.add_argument('-m', '--model', type=str, default='osnet_x1_0')
+    parser.add_argument('--root', type=str, default='/media/ddj2/ce611f70-968b-4316-9547-9bc9cf931d32/V20200108/zhejiang_train')
+    parser.add_argument('-d', '--dataset', type=str, default='rock_dataset')
+    parser.add_argument('-m', '--model', type=str, default='abd_resnet')
     parser.add_argument('--weights', type=str)
-    parser.add_argument('--save-dir', type=str, default='log')
+    parser.add_argument('--save-dir', type=str, default='log/resnet50_cam')
     parser.add_argument('--height', type=int, default=672)
     parser.add_argument('--width', type=int, default=672)
     args = parser.parse_args()

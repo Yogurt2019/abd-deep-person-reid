@@ -7,6 +7,7 @@ from copy import deepcopy
 
 from projects.ABD_Net.ABD_components.model_components import branches
 from projects.ABD_Net.ABD_components.model_components import ShallowCAM
+from projects.ABD_Net.ABD_components.args import model_kwargs, argument_parser
 
 import logging
 
@@ -274,20 +275,9 @@ def resnet50_backbone():
 
 def ABD_resnet50(num_classes, loss='xent', pretrained=False, use_gpu=True):
     backbone = resnet50_backbone()
-    args = {
-        'branches': ['global', 'abd'],
-        # 'branches': ['global'],
-        'global_max_pooling': False,
-        'global_dim': 1024,
-        'dropout': 0.5,
-        'abd_dim': 1024,
-        'abd_np': 2,
-        'abd_dan': ['pam', 'cam'],
-        # 'abd_dan': ['cam', 'pam'],
-        'abd_dan_no_head': True,
-        'shallow_cam': True,
-        'compatibility': False
-    }
+    parser = argument_parser()
+    args = parser.parse_args()
+    args = model_kwargs(args)
     return MultiBranchResNet(backbone, args, num_classes)
 
 

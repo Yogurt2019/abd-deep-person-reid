@@ -13,7 +13,7 @@ datamanager = torchreid.data.ImageDataManager(
     width=672,
     batch_size_train=12,
     batch_size_test=12,
-    transforms=[],
+    transforms=['random_flip'],
     workers=32,
 )
 
@@ -29,21 +29,21 @@ model = nn.DataParallel(model).cuda()
 optimizer = torchreid.optim.build_optimizer(
     model,
     optim='adam',
-    lr=0.0003
+    lr=0.1
 )
 
 
-# start_epoch = torchreid.utils.resume_from_checkpoint(
-#     'log/abd_resnet50/model.pth.tar-80',
-#     model,
-#     optimizer
-# )
+start_epoch = torchreid.utils.resume_from_checkpoint(
+    'log/resnet50_abd/model.pth.tar-40',
+    model,
+    optimizer
+)
 
 
 scheduler = torchreid.optim.build_lr_scheduler(
     optimizer,
     lr_scheduler='single_step',
-    stepsize=20
+    stepsize=30
 )
 
 engine = ImageABDEngine(
@@ -58,11 +58,14 @@ engine = ImageABDEngine(
 )
 
 engine.run(
-    save_dir='log/resnet50_pam',
-    max_epoch=60,
+    save_dir='log/resnet50_abd/visualize',
+    start_epoch=10,
+    max_epoch=90,
     eval_freq=10,
     print_freq=10,
-    test_only=False,
+    test_only=True,
     fixbase_epoch=0,
-    open_layers=['classifier']
+    open_layers=['classifier'],
+    visrank=True,
+    visrank_topk=3
 )

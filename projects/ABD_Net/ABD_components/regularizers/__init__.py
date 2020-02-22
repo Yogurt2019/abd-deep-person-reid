@@ -5,6 +5,7 @@ from .NR import NoneRegularizer
 from .SVMO import SVMORegularizer
 from .SVDO import SVDORegularizer
 from .SO import SORegularizer
+from projects.ABD_Net.ABD_components.args import argument_parser, ow_kwargs
 
 
 mapping = {
@@ -41,8 +42,8 @@ class ConvRegularizer(nn.Module):
         return accumulator
 
 
-def get_regularizer(use_ow):
-    regularizer_args = {
-        'ow_beta': 1e-3
-    }
-    return ConvRegularizer(mapping[use_ow], regularizer_args)
+def get_regularizer():
+    parser = argument_parser()
+    args = parser.parse_args()
+    args = ow_kwargs(args)
+    return ConvRegularizer(mapping[args['use_ow']], args)

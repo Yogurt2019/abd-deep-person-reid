@@ -85,7 +85,9 @@ def visactmap(
 
         for j in range(outputs.size(0)):
             # get image name
-            imname = osp.basename(str(batch_idx) + str(j))
+            imdir = data_loader.dataset.imgs[batch_idx * outputs.size(0) + j][0].split('/')[-2]
+
+            imname = data_loader.dataset.imgs[batch_idx * outputs.size(0) + j][0].split('/')[-1]
 
             # RGB image
             img = imgs[j, ...]
@@ -117,7 +119,9 @@ def visactmap(
             grid_img[:,
                      width + GRID_SPACING:2*width + GRID_SPACING, :] = am
             grid_img[:, 2*width + 2*GRID_SPACING:, :] = overlapped
-            cv2.imwrite(osp.join(actmap_dir, imname + '.jpg'), grid_img)
+            if not osp.exists(osp.join(actmap_dir, imdir)):
+                mkdir_if_missing(osp.join(actmap_dir, imdir))
+            cv2.imwrite(osp.join(actmap_dir, imdir, imname), grid_img)
 
         if (batch_idx+1) % 10 == 0:
             print(
