@@ -32,18 +32,17 @@ optimizer = torchreid.optim.build_optimizer(
     lr=0.1
 )
 
-
-start_epoch = torchreid.utils.resume_from_checkpoint(
-    'log/resnet50_abd/model.pth.tar-40',
-    model,
-    optimizer
-)
+# start_epoch = torchreid.utils.resume_from_checkpoint(
+#     'log/resnet50_abd/model.pth.tar-40',
+#     model,
+#     optimizer
+# )
 
 
 scheduler = torchreid.optim.build_lr_scheduler(
     optimizer,
     lr_scheduler='single_step',
-    stepsize=30
+    stepsize=50
 )
 
 engine = ImageABDEngine(
@@ -58,14 +57,11 @@ engine = ImageABDEngine(
 )
 
 engine.run(
-    save_dir='log/resnet50_abd/visualize',
-    start_epoch=10,
-    max_epoch=90,
+    save_dir='log/resnet50_abd/',
+    # start_epoch=10,
+    max_epoch=200,
     eval_freq=10,
     print_freq=10,
-    test_only=True,
     fixbase_epoch=0,
     open_layers=['classifier'],
-    visrank=True,
-    visrank_topk=3
 )

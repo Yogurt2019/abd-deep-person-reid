@@ -1,5 +1,6 @@
 import os
 import shutil
+import random
 
 
 def makedir(dir):
@@ -16,6 +17,7 @@ def main():
     dirs = os.listdir(dir)
     for item in dirs:
         files = os.listdir(os.path.join(dir, item))
+        random.shuffle(files)
         for mode in ('train', 'gallery', 'query'):
             t_dir = os.path.join(dir.replace('zhejiang_onehot', 'zhejiang_train_8_2'), mode, item)
             makedir(t_dir)

@@ -7,6 +7,7 @@ Reference:
 """
 import numpy as np
 import os.path as osp
+import os
 import argparse
 import cv2
 import torch
@@ -85,9 +86,11 @@ def visactmap(
 
             for j in range(outputs.size(0)):
                 # get image name
-                path = paths[j]
-                imname = path.split['/'][-1]
-                imdir = path.split['/'][-2]
+                p = paths[j]
+                imname = p.split('/')
+                imname = imname[-1]
+                imdir = p.split('/')
+                imdir = imdir[-2]
 
                 # RGB image
                 img = imgs[j, ...]
@@ -142,15 +145,18 @@ def main():
     parser.add_argument('--width', type=int, default=672)
     args = parser.parse_args()
 
+    os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+
     use_gpu = torch.cuda.is_available()
+    torchreid.data.register_image_dataset('rock_dataset', torchreid.data.datasets.image.rock_dataset.RockDataSet)
 
     datamanager = torchreid.data.ImageDataManager(
         root=args.root,
         sources=args.dataset,
         height=args.height,
         width=args.width,
-        batch_size_train=8,
-        batch_size_test=8,
+        batch_size_train=4,
+        batch_size_test=4,
         transforms=None,
         train_sampler='SequentialSampler'
     )
